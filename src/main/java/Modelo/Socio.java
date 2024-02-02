@@ -28,6 +28,7 @@ import javax.persistence.Table;
     @NamedQuery(name = "Socio.findAll", query = "SELECT s FROM Socio s"),
     @NamedQuery(name = "Socio.findByNumeroSocio", query = "SELECT s FROM Socio s WHERE s.numeroSocio = :numeroSocio"),
     @NamedQuery(name = "Socio.findByNombre", query = "SELECT s FROM Socio s WHERE s.nombre = :nombre"),
+    @NamedQuery(name = "Socio.findByAlgodelNombre", query = "SELECT s FROM Socio s WHERE LOWER(s.nombre) LIKE LOWER(:nombre)"),
     @NamedQuery(name = "Socio.findByDni", query = "SELECT s FROM Socio s WHERE s.dni = :dni"),
     @NamedQuery(name = "Socio.findByFechaNacimiento", query = "SELECT s FROM Socio s WHERE s.fechaNacimiento = :fechaNacimiento"),
     @NamedQuery(name = "Socio.findByTelefono", query = "SELECT s FROM Socio s WHERE s.telefono = :telefono"),

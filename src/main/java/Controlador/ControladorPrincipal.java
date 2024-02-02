@@ -4,10 +4,13 @@
  */
 package Controlador;
 
+import Vista.VentanaPrincipal;
+import Vista.VistaActividades;
+import Vista.VistaMonitor;
+import Vista.VistaSocio;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.hibernate.Session;
-import Vista.*;
 import java.awt.CardLayout;
 
 /**
@@ -16,14 +19,16 @@ import java.awt.CardLayout;
  */
 class ControladorPrincipal implements ActionListener {
 
-    Session sesion;
-    VentanaPrincipal vPrincipal = new VentanaPrincipal();
-    private Vista.VistaMonitor vMonitor = new VistaMonitor();
-    private Vista.VistaSocio vSocio = new VistaSocio();
-    private Vista.VistaActividades vActividades = new VistaActividades();
+    private VentanaPrincipal vPrincipal = new VentanaPrincipal();
+    private VistaMonitor vMonitor = new VistaMonitor();
+    private VistaSocio vSocio = new VistaSocio();
+    private VistaActividades vActividades = new VistaActividades();
+
+    ControladorMonitores Cmonitores;
+    ControladorSocio Csocio;
+    ControladorActividades Cactividades;
 
     public ControladorPrincipal(Session sesion) {
-        this.sesion = sesion;
 
         addListeners();
 
@@ -34,6 +39,11 @@ class ControladorPrincipal implements ActionListener {
         vMonitor.setVisible(false);
         vSocio.setVisible(false);
         vActividades.setVisible(false);
+
+        Cmonitores = new ControladorMonitores(sesion, vMonitor);
+        Csocio = new ControladorSocio(sesion, vSocio);
+        Cactividades = new ControladorActividades(sesion, vActividades);
+
     }
 
     public void addListeners() {
@@ -55,7 +65,7 @@ class ControladorPrincipal implements ActionListener {
                 vPrincipal.remove(vActividades);
                 vPrincipal.add(vMonitor);
                 vMonitor.setVisible(true);
-                ControladorMonitores Cmonitores = new ControladorMonitores(sesion, vMonitor);
+
                 break;
 
             case "GestionSocios":
@@ -63,7 +73,6 @@ class ControladorPrincipal implements ActionListener {
                 vPrincipal.add(vSocio);
                 vPrincipal.remove(vActividades);
                 vSocio.setVisible(true);
-                ControladorSocio Csocio = new ControladorSocio(sesion, vSocio);
                 break;
 
             case "GestionActividades":
@@ -71,14 +80,13 @@ class ControladorPrincipal implements ActionListener {
                 vPrincipal.remove(vMonitor);
                 vPrincipal.add(vActividades);
                 vActividades.setVisible(true);
-                ControladorActividades Cactividades = new ControladorActividades(sesion, vActividades);
                 break;
 
             case "VolverMenuPrincipal":
                 vMonitor.setVisible(false);
                 vSocio.setVisible(false);
                 vActividades.setVisible(false);
-                
+
                 vPrincipal.remove(vSocio);
                 vPrincipal.remove(vActividades);
                 vPrincipal.remove(vMonitor);

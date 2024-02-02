@@ -5,7 +5,6 @@
 package Modelo;
 
 import Vista.NuevoSocioActividad;
-import Vista.VistaMonitor;
 import Vista.VistaSocio;
 import java.util.ArrayList;
 import javax.swing.JTable;

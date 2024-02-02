@@ -45,7 +45,7 @@ public class ActualizarSocio extends javax.swing.JDialog {
         jLabel7 = new javax.swing.JLabel();
         categoria = new javax.swing.JTextField();
         AceptarActualizarSocio = new javax.swing.JButton();
-        CancelarNuevoSocio = new javax.swing.JButton();
+        CancelarActualizarSocio = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
         FechaNacimiento = new com.toedter.calendar.JDateChooser();
 
@@ -77,11 +77,11 @@ public class ActualizarSocio extends javax.swing.JDialog {
             }
         });
 
-        CancelarNuevoSocio.setText("Cancelar");
-        CancelarNuevoSocio.setActionCommand("CancelarActualizarSocio");
-        CancelarNuevoSocio.addActionListener(new java.awt.event.ActionListener() {
+        CancelarActualizarSocio.setText("Cancelar");
+        CancelarActualizarSocio.setActionCommand("CancelarActualizarSocio");
+        CancelarActualizarSocio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CancelarNuevoSocioActionPerformed(evt);
+                CancelarActualizarSocioActionPerformed(evt);
             }
         });
 
@@ -130,7 +130,7 @@ public class ActualizarSocio extends javax.swing.JDialog {
                         .addGap(26, 26, 26)
                         .addComponent(AceptarActualizarSocio)
                         .addGap(18, 18, 18)
-                        .addComponent(CancelarNuevoSocio)))
+                        .addComponent(CancelarActualizarSocio)))
                 .addGap(39, 39, 39))
         );
         layout.setVerticalGroup(
@@ -173,7 +173,7 @@ public class ActualizarSocio extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(AceptarActualizarSocio)
-                    .addComponent(CancelarNuevoSocio))
+                    .addComponent(CancelarActualizarSocio))
                 .addGap(19, 19, 19))
         );
 
@@ -184,9 +184,9 @@ public class ActualizarSocio extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_AceptarActualizarSocioActionPerformed
 
-    private void CancelarNuevoSocioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelarNuevoSocioActionPerformed
+    private void CancelarActualizarSocioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelarActualizarSocioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_CancelarNuevoSocioActionPerformed
+    }//GEN-LAST:event_CancelarActualizarSocioActionPerformed
 
     /**
      * @param args the command line arguments
@@ -194,7 +194,7 @@ public class ActualizarSocio extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton AceptarActualizarSocio;
-    public javax.swing.JButton CancelarNuevoSocio;
+    public javax.swing.JButton CancelarActualizarSocio;
     public javax.swing.JTextField Correo;
     public javax.swing.JTextField DNI;
     public com.toedter.calendar.JDateChooser FechaAlta;

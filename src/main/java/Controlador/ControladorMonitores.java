@@ -4,25 +4,13 @@
  */
 package Controlador;
 
-import Modelo.Actividad;
-import Modelo.ActividadDAO;
 import Modelo.Monitor;
 import Modelo.MonitorDAO;
-import Modelo.Socio;
-import Modelo.SocioDAO;
-import Modelo.UtilTablasActividad;
 import Modelo.UtilTablasMonitor;
-import Modelo.UtilTablasSocio;
 import Vista.ActualizarMonitor;
 import Vista.NuevoMonitor;
-import Vista.NuevoSocio;
-import Vista.NuevoSocioActividad;
-import Vista.VentanaPrincipal;
-import Vista.VistaActividades;
 import Vista.VistaMensaje;
 import Vista.VistaMonitor;
-import Vista.VistaSocio;
-import java.awt.CardLayout;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,7 +23,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
  *
@@ -43,11 +30,7 @@ import org.hibernate.Transaction;
  */
 class ControladorMonitores implements ActionListener {
 
-    private Session sesion;
-    private Transaction transaccion;
     private MonitorDAO mDAO;
-    private SocioDAO sDAO;
-    private ActividadDAO aDAO;
 
     private String codigo;
     private String codigoMonitor;
@@ -67,7 +50,6 @@ class ControladorMonitores implements ActionListener {
 
     public ControladorMonitores(Session sesion, VistaMonitor vMonitor) {
 
-        this.sesion = sesion;
         this.vMonitor = vMonitor;
 
         mDAO = new MonitorDAO(sesion);
@@ -101,7 +83,7 @@ class ControladorMonitores implements ActionListener {
 
         nuevomonitor.AceptarNuevoMonitor.addActionListener(this);
         nuevomonitor.CancelarNuevoMonitor.addActionListener(this);
-        
+
         vActMonitor.AceptarActualizaMonitor.addActionListener(this);
         vActMonitor.CancelarActualizaMonitor.addActionListener(this);
     }
@@ -111,8 +93,7 @@ class ControladorMonitores implements ActionListener {
 
         switch (e.getActionCommand()) {
 
-            case "NuevoMonitor":
-
+            case "NuevoMonitor" -> {
                 codigo = mDAO.SiguienteCodigo();
                 nuevomonitor.codigo.setText(codigo);
 
@@ -120,24 +101,22 @@ class ControladorMonitores implements ActionListener {
                 nuevomonitor.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
                 nuevomonitor.setResizable(false);
                 nuevomonitor.setVisible(true);
+            }
 
-                break;
-
-            case "AceptarNuevoMonitor":
-
+            case "AceptarNuevoMonitor" -> {
                 monitor.setCodMonitor(nuevomonitor.codigo.getText());
                 monitor.setNombre(nuevomonitor.nombre.getText());
                 monitor.setDni(nuevomonitor.DNI.getText());
                 monitor.setTelefono(nuevomonitor.Telefono.getText());
                 monitor.setCorreo(nuevomonitor.Correo.getText());
-
-                fechaDate = nuevomonitor.Fechaentrada.getDate();
-
-                fechaString = dateFormat.format(fechaDate);
+                if (nuevomonitor.Fechaentrada.getDate() != null) {
+                    fechaDate = nuevomonitor.Fechaentrada.getDate();
+                    fechaString = dateFormat.format(fechaDate);
+                } else {
+                    fechaString = "";
+                }
                 monitor.setFechaEntrada(fechaString);
-
                 monitor.setNick(nuevomonitor.Nick.getText());
-
                 if (!monitor.getCodMonitor().isEmpty() && !monitor.getNombre().isEmpty() && !monitor.getDni().isEmpty() && !monitor.getTelefono().isEmpty() && !monitor.getCorreo().isEmpty() && !monitor.getFechaEntrada().isEmpty() && !monitor.getNick().isEmpty()) {
                     if (validarDNI(monitor.getDni())) {
                         if (validarCorreo(monitor.getCorreo())) {
@@ -145,9 +124,8 @@ class ControladorMonitores implements ActionListener {
                                 if (validarFechaEntrada(monitor.getFechaEntrada())) {
 
                                     try {
-                                        if (!mDAO.AltaMonitor(monitor)) {
-                                            vMensaje.mostrarmensaje("Error", "Error al insertar Monitor", "No se ha podido realizar la petición");
-                                        }
+                                        mDAO.AltaMonitor(monitor);
+                                        vMensaje.mostrarmensaje("", "El monitor se ha insertado con exito", "Socio " + monitor.getNombre() + " insertado en la BD");
                                     } catch (SQLException ex) {
                                         vMensaje.mostrarmensaje("Error", "Error al insertar Monitor", ex.getMessage());
                                         nuevomonitor.dispose();
@@ -172,7 +150,7 @@ class ControladorMonitores implements ActionListener {
                 } else {
                     vMensaje.mostrarmensaje("Error", "Error al insertar Monitor", "Debe rellenar todos los campos para poder introducir al socio");
                 }
-                 {
+                {
                     try {
                         pideMonitores();
                     } catch (Exception ex) {
@@ -180,7 +158,6 @@ class ControladorMonitores implements ActionListener {
                         vMensaje.mostrarmensaje("Error", "No se puedo Actualizar la vista", ex.getMessage());
                     }
                 }
-
                 nuevomonitor.codigo.setText("");
                 nuevomonitor.nombre.setText("");
                 nuevomonitor.DNI.setText("");
@@ -190,11 +167,9 @@ class ControladorMonitores implements ActionListener {
                 fechaDate = new Date();
                 nuevomonitor.Fechaentrada.setDate(fechaDate);
                 nuevomonitor.dispose();
+            }
 
-                break;
-
-            case "CancelarNuevoMonitor":
-
+            case "CancelarNuevoMonitor" -> {
                 nuevomonitor.codigo.setText("");
                 nuevomonitor.nombre.setText("");
                 nuevomonitor.DNI.setText("");
@@ -204,11 +179,9 @@ class ControladorMonitores implements ActionListener {
                 fechaDate = new Date();
                 nuevomonitor.Fechaentrada.setDate(fechaDate);
                 nuevomonitor.dispose();
+            }
 
-                break;
-
-            case "BajaMonitor":
-
+            case "BajaMonitor" -> {
                 filaSeleccionada = vMonitor.TablaMonitores.getSelectedRow();
                 if (filaSeleccionada == -1) {
                     vMensaje.mostrarmensaje("Advertencia", "Selecciona un monitor", "Por favor, selecciona un monitor de la tabla.");
@@ -216,7 +189,7 @@ class ControladorMonitores implements ActionListener {
                     codigoMonitor = vMonitor.TablaMonitores.getValueAt(filaSeleccionada, 0).toString();
 
                     // Confirmar la baja del monitor con el usuario
-                    int opcion = vMensaje.mostrarmensaje("Confirmación", "¿Estás seguro?", "¿Estás seguro de dar de baja a este monitor? \n Selecciona una opción");
+                    int opcion = vMensaje.mostrarmensaje("¿Estás seguro?", "¿Estás seguro de dar de baja a este monitor? \n Selecciona una opción");
 
                     if (opcion == 0) {
                         // Realizar la baja del monitor en la base de datos
@@ -233,10 +206,9 @@ class ControladorMonitores implements ActionListener {
                         }
                     }
                 }
+            }
 
-                break;
-
-            case "UpdateMonitor":
+            case "UpdateMonitor" -> {
                 filaSeleccionada = vMonitor.TablaMonitores.getSelectedRow();
                 if (filaSeleccionada == -1) {
                     vMensaje.mostrarmensaje("Advertencia", "Selecciona un monitor", "Por favor, selecciona un monitor de la tabla.");
@@ -263,23 +235,22 @@ class ControladorMonitores implements ActionListener {
                     vActMonitor.setResizable(false);
                     vActMonitor.setVisible(true);
                 }
-                break;
+            }
 
-            case "AceptarActualizaMonitor":
-
+            case "AceptarActualizaMonitor" -> {
                 monitor.setCodMonitor(vActMonitor.codigo.getText());
                 monitor.setNombre(vActMonitor.nombre.getText());
                 monitor.setDni(vActMonitor.DNI.getText());
                 monitor.setTelefono(vActMonitor.Telefono.getText());
                 monitor.setCorreo(vActMonitor.Correo.getText());
-
-                fechaDate = vActMonitor.Fechaentrada.getDate();
-
-                fechaString = dateFormat.format(fechaDate);
+                if (vActMonitor.Fechaentrada.getDate() != null) {
+                    fechaDate = vActMonitor.Fechaentrada.getDate();
+                    fechaString = dateFormat.format(fechaDate);
+                } else {
+                    fechaString = "";
+                }
                 monitor.setFechaEntrada(fechaString);
-
                 monitor.setNick(vActMonitor.Nick.getText());
-
                 if (!monitor.getCodMonitor().isEmpty() && !monitor.getNombre().isEmpty() && !monitor.getDni().isEmpty() && !monitor.getTelefono().isEmpty() && !monitor.getCorreo().isEmpty() && !monitor.getFechaEntrada().isEmpty() && !monitor.getNick().isEmpty()) {
                     if (validarDNI(monitor.getDni())) {
                         if (validarCorreo(monitor.getCorreo())) {
@@ -313,7 +284,7 @@ class ControladorMonitores implements ActionListener {
                 } else {
                     vMensaje.mostrarmensaje("Error", "Error al insertar Monitor", "Debe rellenar todos los campos para poder introducir al socio");
                 }
-                 {
+                {
                     try {
                         pideMonitores();
                     } catch (Exception ex) {
@@ -321,16 +292,12 @@ class ControladorMonitores implements ActionListener {
                         vMensaje.mostrarmensaje("Error", "No se puedo Actualizar la vista", ex.getMessage());
                     }
                 }
+            }
 
-                break;
-
-            case "CancelarActualizaMonitor":
-
+            case "CancelarActualizaMonitor" ->
                 vActMonitor.dispose();
 
-                break;
-
-            default:
+            default ->
                 throw new AssertionError();
         }
 

@@ -5,11 +5,7 @@
 package Modelo;
 
 import Vista.VistaActividades;
-import Vista.VistaMonitor;
-import Vista.VistaSocio;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -61,8 +57,13 @@ public class UtilTablasActividad {
             System.out.println(actividad.getDescripcion());
             fila[3] = actividad.getPrecioBaseMes();
             System.out.println(actividad.getPrecioBaseMes());
-            fila[4] = actividad.getMonitorResponsable();
-            System.out.println(actividad.getMonitorResponsable());
+            if (actividad.getMonitorResponsable() != null) {
+                fila[4] = actividad.getMonitorResponsable().getCodMonitor();
+                System.out.println(actividad.getMonitorResponsable().getCodMonitor());
+            } else {
+                fila[4] = "N/A";
+                System.out.println("N/A");
+            }
             modeloTablaActividad.addRow(fila);
 
         }

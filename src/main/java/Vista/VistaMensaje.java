@@ -12,23 +12,28 @@ import javax.swing.JOptionPane;
  */
 public class VistaMensaje {
     
-    public int mostrarmensaje(String Tipo, String titulo, String texto){
-        
-        int opcion =0;
+    public void mostrarmensaje(String Tipo, String titulo, String texto){
+
         
         if (Tipo.equals("Error")) {
             
             JOptionPane.showMessageDialog(null, texto, titulo, JOptionPane.ERROR_MESSAGE);
             
-        }else if (Tipo.equals("Confirmación")) {
+        }else if (Tipo.equals("Advertencia")) {
             
-            opcion = JOptionPane.showConfirmDialog(null, texto, titulo, JOptionPane.YES_NO_OPTION);
+            JOptionPane.showMessageDialog(null, texto, titulo, JOptionPane.YES_NO_OPTION);
             
         }else{
             JOptionPane.showMessageDialog(null, texto, titulo, JOptionPane.INFORMATION_MESSAGE);
         }
-        return opcion;
         
+    }
+    
+    public int mostrarmensaje(String titulo, String texto){
+        
+        int opcion = JOptionPane.showConfirmDialog(null, texto, titulo, JOptionPane.YES_NO_OPTION);
+
+        return opcion;
     }
     
 }

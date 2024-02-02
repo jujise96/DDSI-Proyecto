@@ -10,22 +10,14 @@ import Modelo.Socio;
 import Modelo.SocioDAO;
 import Modelo.UtilTablasActividad;
 import Modelo.UtilTablasSocio;
-import Vista.NuevoSocio;
 import Vista.NuevoSocioActividad;
-import Vista.VentanaPrincipal;
 import Vista.VistaActividades;
 import Vista.VistaMensaje;
-import java.awt.CardLayout;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
  *
@@ -33,17 +25,11 @@ import org.hibernate.Transaction;
  */
 class ControladorActividades implements ActionListener {
 
-    private Session sesion;
-    private Transaction transaccion;
     private SocioDAO sDAO;
     private ActividadDAO aDAO;
 
     private String codigo;
-    private String codigoMonitor;
     private int filaSeleccionada;
-    String fechaString;
-    Date fechaDate;
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     private Vista.VistaActividades vActividades;
 
@@ -52,15 +38,10 @@ class ControladorActividades implements ActionListener {
 
     private Vista.VistaMensaje vMensaje = new VistaMensaje();
 
-    private NuevoSocio nuevosocio = new NuevoSocio();
-    private Socio socio = new Socio();
-
     private NuevoSocioActividad nuevosocioactividad = new NuevoSocioActividad();
-    private Actividad actividad = new Actividad();
 
     public ControladorActividades(Session sesion, VistaActividades vActividades) {
 
-        this.sesion = sesion;
         this.vActividades = vActividades;
 
         aDAO = new ActividadDAO(sesion);
@@ -119,8 +100,7 @@ class ControladorActividades implements ActionListener {
 
         switch (e.getActionCommand()) {
 
-            case "AltaActividad":
-
+            case "AltaActividad" -> {
                 nuevosocioactividad.AltaSocioActividad.setActionCommand("AltaSocioActividad");
                 nuevosocioactividad.AltaSocioActividad.setText("Alta de Socio en Actividad");
                 nuevosocioactividad.TituloMayor.setText("Alta en Actividad");
@@ -148,10 +128,9 @@ class ControladorActividades implements ActionListener {
                     nuevosocioactividad.setVisible(true);
 
                 }
-                break;
+            }
 
-            case "AltaSocioActividad":
-
+            case "AltaSocioActividad" -> {
                 filaSeleccionada = nuevosocioactividad.TablaSociosActividad.getSelectedRow();
                 if (filaSeleccionada == -1) {
                     vMensaje.mostrarmensaje("Advertencia", "Selecciona un socio", "Por favor, selecciona un socio de la tabla.");
@@ -165,14 +144,13 @@ class ControladorActividades implements ActionListener {
                     } catch (Exception ex) {
                         vMensaje.mostrarmensaje("Error", "Error al mostrar socios", ex.getMessage());
                     }
-                    
+
                     nuevosocioactividad.dispose();
 
                 }
-                break;
+            }
 
-            case "BajaActividad":
-
+            case "BajaActividad" -> {
                 nuevosocioactividad.AltaSocioActividad.setActionCommand("BajaSocioActividad");
                 nuevosocioactividad.AltaSocioActividad.setText("Baja de Socio en Actividad");
                 nuevosocioactividad.TituloMayor.setText("Baja en Actividad");
@@ -198,12 +176,11 @@ class ControladorActividades implements ActionListener {
                     nuevosocioactividad.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
                     nuevosocioactividad.setResizable(false);
                     nuevosocioactividad.setVisible(true);
-                    
-                    
-                }
-                break;
 
-            case "BajaSocioActividad":
+                }
+            }
+
+            case "BajaSocioActividad" -> {
                 filaSeleccionada = nuevosocioactividad.TablaSociosActividad.getSelectedRow();
                 if (filaSeleccionada == -1) {
                     vMensaje.mostrarmensaje("Advertencia", "Selecciona un socio", "Por favor, selecciona un socio de la tabla.");
@@ -219,17 +196,14 @@ class ControladorActividades implements ActionListener {
                     }
 
                     nuevosocioactividad.dispose();
-                    
+
                 }
-                break;
+            }
 
-            case "cancelaraltabajaActividad":
-
+            case "cancelaraltabajaActividad" ->
                 nuevosocioactividad.dispose();
 
-                break;
-
-            default:
+            default ->
                 throw new AssertionError();
         }
 

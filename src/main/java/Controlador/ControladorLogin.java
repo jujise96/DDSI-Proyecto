@@ -65,7 +65,7 @@ public class ControladorLogin implements ActionListener {
         } catch (ExceptionInInitializerError e) {
 
             vMensaje.mostrarmensaje("Error", "Error al cargar la BD", "No se ha podido cargar la base de datos " + server);
-            
+
         }
     }
 

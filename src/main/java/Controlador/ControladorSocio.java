@@ -9,10 +9,8 @@ import Modelo.SocioDAO;
 import Modelo.UtilTablasSocio;
 import Vista.ActualizarSocio;
 import Vista.NuevoSocio;
-import Vista.VentanaPrincipal;
 import Vista.VistaMensaje;
 import Vista.VistaSocio;
-import java.awt.CardLayout;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,7 +24,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
  *
@@ -34,18 +31,14 @@ import org.hibernate.Transaction;
  */
 class ControladorSocio implements ActionListener {
 
-    private Session sesion;
-    private Transaction transaccion;
     private SocioDAO sDAO;
 
     private String codigo;
-    private String codigoMonitor;
     private int filaSeleccionada;
     String fechaString;
     Date fechaDate;
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-    
     private VistaSocio vSocio;
     private ActualizarSocio vActSocio = new ActualizarSocio();
 
@@ -58,11 +51,10 @@ class ControladorSocio implements ActionListener {
 
     public ControladorSocio(Session sesion, VistaSocio vSocio) {
 
-        this.sesion = sesion;
         this.vSocio = vSocio;
-        
+
         sDAO = new SocioDAO(sesion);
-        
+
         uTablasS.dibujarTablaSocio(vSocio);
 
         try {
@@ -70,7 +62,7 @@ class ControladorSocio implements ActionListener {
         } catch (Exception ex) {
             vMensaje.mostrarmensaje("Error", "No se han podido obtener los socios", ex.getMessage());
         }
-        
+
         addListeners();
 
     }
@@ -92,7 +84,7 @@ class ControladorSocio implements ActionListener {
     }
 
     private void addListeners() {
-        
+
         vSocio.AltaSocio.addActionListener(this);
         vSocio.BajaSocio.addActionListener(this);
         vSocio.UpdateSocio.addActionListener(this);
@@ -100,9 +92,9 @@ class ControladorSocio implements ActionListener {
 
         nuevosocio.AceptarNuevoSocio.addActionListener(this);
         nuevosocio.CancelarNuevoSocio.addActionListener(this);
-        
+
         vActSocio.AceptarActualizarSocio.addActionListener(this);
-        vActSocio.CancelarNuevoSocio.addActionListener(this);
+        vActSocio.CancelarActualizarSocio.addActionListener(this);
 
     }
 
@@ -110,9 +102,8 @@ class ControladorSocio implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         switch (e.getActionCommand()) {
-         
-            case "AltaSocio":
 
+            case "AltaSocio" -> {
                 codigo = sDAO.SiguienteCodigo();
                 nuevosocio.codigo.setText(codigo);
 
@@ -120,41 +111,44 @@ class ControladorSocio implements ActionListener {
                 nuevosocio.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
                 nuevosocio.setResizable(false);
                 nuevosocio.setVisible(true);
+            }
 
-                break;
-
-            case "AceptarNuevoSocio":
-
+            case "AceptarNuevoSocio" -> {
                 socio.setNumeroSocio(nuevosocio.codigo.getText());
                 socio.setNombre(nuevosocio.nombre.getText());
                 socio.setDni(nuevosocio.DNI.getText());
                 socio.setTelefono(nuevosocio.Telefono.getText());
                 socio.setCorreo(nuevosocio.Correo.getText());
-                socio.setCategoria(Character.toUpperCase(nuevosocio.categoria.getText().charAt(0)));
-
-                fechaDate = nuevosocio.FechaAlta.getDate();
-
-                fechaString = dateFormat.format(fechaDate);
+                if (!nuevosocio.categoria.getText().isEmpty()) {
+                    socio.setCategoria(Character.toUpperCase(nuevosocio.categoria.getText().charAt(0)));
+                }
+                if (nuevosocio.FechaAlta.getDate() != null) {
+                    fechaDate = nuevosocio.FechaAlta.getDate();
+                    fechaString = dateFormat.format(fechaDate);
+                } else {
+                    fechaString = "";
+                }
                 socio.setFechaEntrada(fechaString);
-
-                fechaDate = nuevosocio.FechaNacimiento.getDate();
-
-                fechaString = dateFormat.format(fechaDate);
+                if (nuevosocio.FechaNacimiento.getDate() != null) {
+                    fechaDate = nuevosocio.FechaNacimiento.getDate();
+                    fechaString = dateFormat.format(fechaDate);
+                } else {
+                    fechaString = "";
+                }
                 socio.setFechaNacimiento(fechaString);
-
-                if (!socio.getNumeroSocio().isEmpty() && !socio.getNombre().isEmpty() && !socio.getDni().isEmpty() && !socio.getTelefono().isEmpty() && !socio.getCorreo().isEmpty() && !socio.getFechaEntrada().isEmpty() && !socio.getFechaNacimiento().isEmpty() && !socio.getCategoria().toString().isEmpty()) {
+                if (!socio.getNumeroSocio().isEmpty() && !socio.getNombre().isEmpty() && !socio.getDni().isEmpty() && !socio.getTelefono().isEmpty() && !socio.getCorreo().isEmpty() && !socio.getFechaEntrada().isEmpty() && !socio.getFechaNacimiento().isEmpty() && !nuevosocio.categoria.getText().isEmpty()) {
                     if (validarDNI(socio.getDni())) {
                         if (validarCorreo(socio.getCorreo())) {
                             if (validarTelefono(socio.getTelefono())) {
                                 if (validarFechaEntrada(socio.getFechaEntrada())) {
                                     if (validarEdadSocio(socio.getFechaNacimiento())) {
 
-                                        if (!sDAO.AltaSocio(socio)) {
-                                            vMensaje.mostrarmensaje("Error", "Error al insertar socio", "No se ha podido realizar la petición");
-                                        }else{
-                                            vMensaje.mostrarmensaje("", "El socio se ha insertado con exito", "Socio "+socio.getNombre()+" insertado en la BD");
+                                        try{
+                                        sDAO.AltaSocio(socio);
+                                        vMensaje.mostrarmensaje("", "El socio se ha insertado con exito", "Socio " + socio.getNombre() + " insertado en la BD");
+                                        } catch (Exception ex){
+                                        vMensaje.mostrarmensaje("Error", "Error al insertar socio", ex.getMessage());
                                         }
-
                                         nuevosocio.dispose();
                                     } else {
                                         vMensaje.mostrarmensaje("Error", "Error al insertar socio", "El socio debe ser mayor de 18 años");
@@ -175,8 +169,7 @@ class ControladorSocio implements ActionListener {
                 } else {
                     vMensaje.mostrarmensaje("Error", "Error al insertar socio", "Debe rellenar todos los campos para poder introducir al socio");
                 }
-
-                 {
+                {
                     try {
                         pideSocios();
                     } catch (Exception ex) {
@@ -184,8 +177,6 @@ class ControladorSocio implements ActionListener {
                         vMensaje.mostrarmensaje("Error", "No se puedo Actualizar la vista", ex.getMessage());
                     }
                 }
-                 
-                
                 nuevosocio.codigo.setText("");
                 nuevosocio.nombre.setText("");
                 nuevosocio.DNI.setText("");
@@ -196,11 +187,9 @@ class ControladorSocio implements ActionListener {
                 nuevosocio.FechaAlta.setDate(fechaDate);
                 nuevosocio.FechaNacimiento.setDate(fechaDate);
                 nuevosocio.dispose();
+            }
 
-                break;
-
-            case "CancelarNuevoSocio":
-
+            case "CancelarNuevoSocio" -> {
                 nuevosocio.codigo.setText("");
                 nuevosocio.nombre.setText("");
                 nuevosocio.DNI.setText("");
@@ -211,11 +200,9 @@ class ControladorSocio implements ActionListener {
                 nuevosocio.FechaAlta.setDate(fechaDate);
                 nuevosocio.FechaNacimiento.setDate(fechaDate);
                 nuevosocio.dispose();
+            }
 
-                break;
-
-            case "BajaSocio":
-
+            case "BajaSocio" -> {
                 filaSeleccionada = vSocio.TablaSocios.getSelectedRow();
                 if (filaSeleccionada == -1) {
                     vMensaje.mostrarmensaje("Advertencia", "Selecciona un socio", "Por favor, selecciona un socio de la tabla.");
@@ -223,7 +210,7 @@ class ControladorSocio implements ActionListener {
                     codigo = vSocio.TablaSocios.getValueAt(filaSeleccionada, 0).toString();
 
                     // Confirmar la baja del monitor con el usuario
-                    int opcion = vMensaje.mostrarmensaje("Confirmación", "¿Estás seguro?", "¿Estás seguro de dar de baja a este socio? \n Selecciona una opción");
+                    int opcion = vMensaje.mostrarmensaje("¿Estás seguro?", "¿Estás seguro de dar de baja a este socio? \n Selecciona una opción");
 
                     if (opcion == 0) {
                         // Realizar la baja del monitor en la base de datos
@@ -240,10 +227,9 @@ class ControladorSocio implements ActionListener {
                         }
                     }
                 }
+            }
 
-                break;
-
-            case "UpdateSocio":
+            case "UpdateSocio" -> {
                 filaSeleccionada = vSocio.TablaSocios.getSelectedRow();
                 if (filaSeleccionada == -1) {
                     vMensaje.mostrarmensaje("Advertencia", "Selecciona un socio", "Por favor, selecciona un socio de la tabla.");
@@ -278,28 +264,32 @@ class ControladorSocio implements ActionListener {
                     vActSocio.setResizable(false);
                     vActSocio.setVisible(true);
                 }
-                break;
-                
-                case "AceptarActualizarSocio":
+            }
 
+            case "AceptarActualizarSocio" -> {
                 socio.setNumeroSocio(vActSocio.codigo.getText());
                 socio.setNombre(vActSocio.nombre.getText());
                 socio.setDni(vActSocio.DNI.getText());
                 socio.setTelefono(vActSocio.Telefono.getText());
                 socio.setCorreo(vActSocio.Correo.getText());
-                socio.setCategoria(Character.toUpperCase(vActSocio.categoria.getText().charAt(0)));
-
-                fechaDate = vActSocio.FechaAlta.getDate();
-
-                fechaString = dateFormat.format(fechaDate);
+                if (!vActSocio.categoria.getText().isEmpty()) {
+                    socio.setCategoria(Character.toUpperCase(vActSocio.categoria.getText().charAt(0)));
+                }
+                if (vActSocio.FechaAlta.getDate() != null) {
+                    fechaDate = vActSocio.FechaAlta.getDate();
+                    fechaString = dateFormat.format(fechaDate);
+                } else {
+                    fechaString = "";
+                }
                 socio.setFechaEntrada(fechaString);
-
-                fechaDate = vActSocio.FechaNacimiento.getDate();
-
-                fechaString = dateFormat.format(fechaDate);
+                if (vActSocio.FechaNacimiento.getDate() != null) {
+                    fechaDate = vActSocio.FechaNacimiento.getDate();
+                    fechaString = dateFormat.format(fechaDate);
+                } else {
+                    fechaString = "";
+                }
                 socio.setFechaNacimiento(fechaString);
-
-                if (!socio.getNumeroSocio().isEmpty() && !socio.getNombre().isEmpty() && !socio.getDni().isEmpty() && !socio.getTelefono().isEmpty() && !socio.getCorreo().isEmpty() && !socio.getFechaEntrada().isEmpty() && !socio.getFechaNacimiento().isEmpty() && !socio.getCategoria().toString().isEmpty()) {
+                if (!socio.getNumeroSocio().isEmpty() && !socio.getNombre().isEmpty() && !socio.getDni().isEmpty() && !socio.getTelefono().isEmpty() && !socio.getCorreo().isEmpty() && !socio.getFechaEntrada().isEmpty() && !socio.getFechaNacimiento().isEmpty() && !vActSocio.categoria.getText().isEmpty()) {
                     if (validarDNI(socio.getDni())) {
                         if (validarCorreo(socio.getCorreo())) {
                             if (validarTelefono(socio.getTelefono())) {
@@ -333,8 +323,7 @@ class ControladorSocio implements ActionListener {
                 } else {
                     vMensaje.mostrarmensaje("Error", "Error al actualizado socio", "Debe rellenar todos los campos para poder introducir al socio");
                 }
-
-                 {
+                {
                     try {
                         pideSocios();
                     } catch (Exception ex) {
@@ -342,18 +331,12 @@ class ControladorSocio implements ActionListener {
                         vMensaje.mostrarmensaje("Error", "No se puedo Actualizar la vista", ex.getMessage());
                     }
                 }
+            }
 
-                break;
-
-            case "CancelarActualizarSocio":
-
+            case "CancelarActualizarSocio" ->
                 vActSocio.dispose();
 
-                break;
-                
-                
-
-            case "BuscarSocio":
+            case "BuscarSocio" -> {
                 if (vSocio.NombreSocioBusqueda.getText().isEmpty()) {
                     vMensaje.mostrarmensaje("Error", "Error al mostrar socios", "Debes indicar el nombre del socio");
                 } else {
@@ -364,10 +347,9 @@ class ControladorSocio implements ActionListener {
                         vMensaje.mostrarmensaje("Error", "Error al mostrar socios", "Se han producido errores al mostrar los socios");
                     }
                 }
+            }
 
-                break;
-
-            default:
+            default ->
                 throw new AssertionError();
         }
 

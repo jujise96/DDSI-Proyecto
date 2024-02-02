@@ -31,12 +31,13 @@ public class ActividadDAO {
 
     public ArrayList<Actividad> listaActividades() throws Exception {
 
-        Transaction transaccion = sesion.beginTransaction();
+        Transaction transaccion = sesion.beginTransaction(); // Iniciamos transaccion con hibernate
 
-        Query consulta = sesion.createNamedQuery("Actividad.findAll", Actividad.class);
-        ArrayList<Actividad> actividades = (ArrayList<Actividad>) consulta.list();
+        Query consulta = sesion.createNamedQuery("Actividad.findAll", Actividad.class); //obtenemos todas las actividades de la BD
+        
+        ArrayList<Actividad> actividades = (ArrayList<Actividad>) consulta.list(); //almacenamos la lista de actividades en un array
 
-        transaccion.commit();
+        transaccion.commit(); //confirmamos la transaccion con la BD
 
         return actividades;
 
@@ -44,12 +45,12 @@ public class ActividadDAO {
 
     public void darAltaSocioEnActividad(String numeroSocio, String codigoActividad) {
         
-        Transaction transaccion = sesion.beginTransaction();
+        Transaction transaccion = sesion.beginTransaction(); // Iniciamos transaccion con hibernate
         
-        Socio socio = sesion.get(Socio.class, numeroSocio);
-        Actividad actividad = sesion.get(Actividad.class, codigoActividad);
+        Socio socio = sesion.get(Socio.class, numeroSocio); // obtenemos al socio indicado por el numero de socio
+        Actividad actividad = sesion.get(Actividad.class, codigoActividad); // obtenemos la actividad indicada por e codigoactividad
         
-        if (socio != null && actividad != null) {
+        if (socio != null && actividad != null) { // comproamos que tanto el socio como la actividad no sean nulas
             // Crear la consulta SQL para insertar en la tabla REALIZA
             String sql = "INSERT INTO REALIZA (numeroSocio, idActividad) VALUES (:numeroSocio, :idActividad)";
             sesion.createSQLQuery(sql)
@@ -57,7 +58,7 @@ public class ActividadDAO {
                     .setParameter("idActividad", codigoActividad)
                     .executeUpdate();
 
-            transaccion.commit();
+            transaccion.commit();  //confirmamos la transaccion con la BD
             System.out.println("Socio con número " + numeroSocio + " dado de alta en la actividad " + codigoActividad);
         } else {
             System.out.println("No se encontró un socio con el número " + numeroSocio + " o una actividad con el código " + codigoActividad);
@@ -66,12 +67,12 @@ public class ActividadDAO {
 
     public void darBajaSocioDeActividad(String numeroSocio, String codigoActividad) {
 
-        Transaction transaccion = sesion.beginTransaction();
+        Transaction transaccion = sesion.beginTransaction(); // Iniciamos transaccion con hibernate
         
-        Socio socio = sesion.get(Socio.class, numeroSocio);
-        Actividad actividad = sesion.get(Actividad.class, codigoActividad);
+        Socio socio = sesion.get(Socio.class, numeroSocio); //obtenemos el socio indicado por el numero de socio 
+        Actividad actividad = sesion.get(Actividad.class, codigoActividad); //obtenemos la actividad indicada por el numero de actividad
 
-        if (socio != null && actividad != null) {
+        if (socio != null && actividad != null) { //comprobamos que existen la actividad y el socio
             // Crear la consulta SQL para eliminar la fila en la tabla REALIZA
             String sql = "DELETE FROM REALIZA WHERE numeroSocio = :numeroSocio AND idActividad = :idActividad";
             sesion.createSQLQuery(sql)
@@ -79,7 +80,7 @@ public class ActividadDAO {
                     .setParameter("idActividad", codigoActividad)
                     .executeUpdate();
 
-            transaccion.commit();
+            transaccion.commit(); //confirmamos la transaccion con la BD
             System.out.println("Socio con número " + numeroSocio + " dado de baja de la actividad " + codigoActividad);
         } else {
             System.out.println("No se encontró un socio con el número " + numeroSocio + " o una actividad con el código " + codigoActividad);
@@ -88,9 +89,9 @@ public class ActividadDAO {
 
     public void mostrarSociosDeActividad() {
         System.out.println("Indicar el código de actividad");
-        String codigoActividad = sc.nextLine();
+        String codigoActividad = sc.nextLine(); // recogemos el codigo de la catividad deseada
 
-        Transaction transaccion = sesion.beginTransaction();
+        Transaction transaccion = sesion.beginTransaction();  // Iniciamos transaccion con hibernate
 
         // Crear la consulta SQL nativa para obtener los socios inscritos en la actividad
         String sql = "SELECT s.* FROM SOCIO s "
@@ -109,7 +110,7 @@ public class ActividadDAO {
             System.out.println("Nombre: " + nombre + ", Teléfono: " + telefono);
         }
 
-        transaccion.commit();
+        transaccion.commit();  //confirmamos la transaccion con la BD
     }
 
     public void AltaActividad(Actividad actividad) throws SQLException {
@@ -134,8 +135,10 @@ public class ActividadDAO {
 
         System.out.println(actividades.size());
 
-        for (int i = 0; i < actividades.size(); i++) {
+        for (int i = 0; i < actividades.size(); i++) { //iteramos en la lista de actividades
 
+            //comprobamos que existe los atributos y los dibujamos
+            
             if (actividades.get(i).getIdActividad() != null) {
                 System.out.println("Número de actividad: " + actividades.get(i).getIdActividad());
             }
@@ -161,22 +164,22 @@ public class ActividadDAO {
 
     public String SiguienteCodigo() {
         
-        Query consulta = sesion.createNativeQuery("SELECT MAX(idActividad) FROM ACTIVIDAD");
-        String aux = (String) consulta.getSingleResult();
+        Query consulta = sesion.createNativeQuery("SELECT MAX(idActividad) FROM ACTIVIDAD"); // generamos la consulta para obtener el numero mas alto de identificador
+        String aux = (String) consulta.getSingleResult(); // almacenamos el codigo
 
-        aux = aux.replaceAll("[^0-9]", "");
-        int NActividad = Integer.parseInt(aux) + 1;
-        String SActividad = "";
+        aux = aux.replaceAll("[^0-9]", "");//nos quedamos con la parte numerica
+        int NActividad = Integer.parseInt(aux) + 1;//lo convertimos a integer e incrementamos
+        String SActividad = "";//incializamos el codigo
         
-        if(NActividad<10){
+        if(NActividad<10){ //formateamos
             SActividad = "00"+NActividad;
         }else if(NActividad<100){
             SActividad = "0"+NActividad;
         }
         
-        String numeroSocio = "A" + SActividad;
+        String numeroSocio = "A" + SActividad; // incorporamos el identificador del codigo
 
-        return numeroSocio;
+        return numeroSocio; // retornamos el codigo siguiente al mayor
     
         
     

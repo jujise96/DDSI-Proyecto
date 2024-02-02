@@ -68,7 +68,7 @@
                       <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
                       <Component id="AceptarActualizarSocio" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="CancelarNuevoSocio" min="-2" max="-2" attributes="0"/>
+                      <Component id="CancelarActualizarSocio" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
@@ -127,7 +127,7 @@
               <EmptySpace pref="52" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="AceptarActualizarSocio" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="CancelarNuevoSocio" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="CancelarActualizarSocio" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
           </Group>
@@ -223,13 +223,13 @@
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JButton" name="CancelarNuevoSocio">
+    <Component class="javax.swing.JButton" name="CancelarActualizarSocio">
       <Properties>
         <Property name="text" type="java.lang.String" value="Cancelar"/>
         <Property name="actionCommand" type="java.lang.String" value="CancelarActualizarSocio"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CancelarNuevoSocioActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CancelarActualizarSocioActionPerformed"/>
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
